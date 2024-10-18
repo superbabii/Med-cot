@@ -1,0 +1,7 @@
+python-liquid
+transformers
+sentence_transformers
+blobfile
+protobuf
+sentencepiece
+accelerate
