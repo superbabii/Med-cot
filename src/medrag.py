@@ -3,6 +3,7 @@ import json
 import torch
 import transformers
 from transformers import AutoTokenizer
+from transformers import AutoModelForCausalLM
 
 
 class MedRAG:
@@ -21,7 +22,9 @@ class MedRAG:
             torch_dtype=torch.float16,
             device_map="auto",
             model_kwargs={"cache_dir": self.cache_dir},
+            tokenizer=self.tokenizer
         )
+
         
         self.max_length = 2048
 
