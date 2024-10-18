@@ -22,9 +22,11 @@ class MedRAG:
             device_map="auto",
             model_kwargs={"cache_dir": self.cache_dir},
         )
+        
+        self.max_length = 2048
 
     def generate(self, messages):
-        self.initialize_model()
+
         stopping_criteria = None
         
         response = self.model(
