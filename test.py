@@ -49,12 +49,13 @@ for question_id, question_data in all_questions:
     else:
         options_text = ''
 
-    # Create the prompt with few-shot examples and more guidance
+    # Create the prompt with few-shot examples, separator, and more guidance
     prompt = (
         few_shot_examples +
+        "\n---\n" +
         f"Question: {question} "
         f"Options: {options_text} "
-        "Please select one of the following options (A, B, or C). The answer is:"
+        "Based on the examples above, please select one of the following options (A, B, or C). The answer is:"
     )
 
     number_all_questions += 1
