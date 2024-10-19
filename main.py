@@ -26,7 +26,6 @@ all_questions = all_questions[:1000]
 cot = MedRAG(llm_name="microsoft/biogpt", rag=False)
 
 # Store the results of comparisons
-results = []
 correct_count = 0
 answered_questions = 0
 number_all_questions = 0
