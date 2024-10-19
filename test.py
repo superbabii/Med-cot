@@ -28,14 +28,6 @@ def timeout_handler(signum, frame):
 # Set the timeout limit to 60 seconds
 signal.signal(signal.SIGALRM, timeout_handler)
 
-# Few-shot examples to guide the model
-few_shot_examples = (
-    "Question: Is aspirin effective in preventing cardiovascular events? "
-    "Options: A. yes B. no C. maybe Answer: A.\n"
-    "Question: Does smoking increase the risk of lung cancer? "
-    "Options: A. yes B. no C. maybe Answer: A.\n"
-)
-
 # Iterate over each question and get the generated answer
 for question_id, question_data in all_questions:
     # Extract the question, options, and correct answer
@@ -49,13 +41,11 @@ for question_id, question_data in all_questions:
     else:
         options_text = ''
 
-    # Create the prompt with few-shot examples, separator, and more guidance
+    # Create the prompt for zero-shot prompting
     prompt = (
-        few_shot_examples +
-        "\n---\n" +
         f"Question: {question} "
         f"Options: {options_text} "
-        "Based on the examples above, please select one of the following options (A, B, or C). The answer is:"
+        "Please select the most appropriate option (A, B, or C). The answer is:"
     )
 
     number_all_questions += 1
