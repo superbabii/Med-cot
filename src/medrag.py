@@ -6,7 +6,7 @@ from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 
 class MedRAG:
 
-    def __init__(self, llm_name="dmis-lab/biobert-v1.1", rag=True, cache_dir=None):
+    def __init__(self, llm_name="microsoft/biogpt", rag=True, cache_dir=None):
         self.llm_name = llm_name
         self.rag = rag
         self.cache_dir = cache_dir
