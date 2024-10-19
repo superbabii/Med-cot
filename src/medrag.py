@@ -3,7 +3,6 @@ import json
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 
-
 class MedRAG:
 
     def __init__(self, llm_name="microsoft/biogpt", rag=True, cache_dir=None):
@@ -15,25 +14,29 @@ class MedRAG:
         self.tokenizer = AutoTokenizer.from_pretrained(self.llm_name, cache_dir=self.cache_dir)
         self.model = AutoModelForCausalLM.from_pretrained(self.llm_name, cache_dir=self.cache_dir, torch_dtype=torch.float16)
 
-        # Initialize text-generation pipeline
+        # Detect available device (GPU or CPU)
+        device = 0 if torch.cuda.is_available() else -1
+
+        # Initialize text-generation pipeline with device
         self.pipeline = pipeline(
             "text-generation",
             model=self.model,
             tokenizer=self.tokenizer,
-            device_map="auto",
+            device=device,  # Use GPU if available
             model_kwargs={"cache_dir": self.cache_dir}
         )
 
         self.max_length = 2048
 
     def generate(self, prompt):
-        # Generate a response using the pipeline
+        # Generate a response using the pipeline with truncation enabled
         response = self.pipeline(
             prompt,
             do_sample=False,
             max_length=min(len(self.tokenizer.encode(prompt)) + 50, self.max_length),
             pad_token_id=self.tokenizer.pad_token_id,
-            eos_token_id=self.tokenizer.eos_token_id
+            eos_token_id=self.tokenizer.eos_token_id,
+            truncation=True  # Explicit truncation to avoid warning
         )
         # Extract the generated text from the response
         generated_text = response[0]["generated_text"]

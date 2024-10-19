@@ -5,3 +5,4 @@ blobfile
 protobuf
 sentencepiece
 accelerate
+sacremoses
