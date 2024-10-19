@@ -1,7 +1,8 @@
 import os
 import json
 import torch
-from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
+from transformers import pipeline, set_seed
+from transformers import BioGptTokenizer, BioGptForCausalLM
 
 class MedRAG:
 
@@ -11,32 +12,33 @@ class MedRAG:
         self.cache_dir = cache_dir
 
         # Load tokenizer and model
-        self.tokenizer = AutoTokenizer.from_pretrained(self.llm_name, cache_dir=self.cache_dir)
-        self.model = AutoModelForCausalLM.from_pretrained(self.llm_name, cache_dir=self.cache_dir, torch_dtype=torch.float16)
+        self.tokenizer = BioGptTokenizer.from_pretrained(self.llm_name, cache_dir=self.cache_dir)
+        self.model = BioGptForCausalLM.from_pretrained(self.llm_name, cache_dir=self.cache_dir)
 
         # Detect available device (GPU or CPU)
         device = 0 if torch.cuda.is_available() else -1
 
-        # Initialize text-generation pipeline with device
+        # Initialize text-generation pipeline with proper device
         self.pipeline = pipeline(
-            "text-generation",
+            'text-generation',
             model=self.model,
             tokenizer=self.tokenizer,
-            device=device,  # Use GPU if available
-            model_kwargs={"cache_dir": self.cache_dir}
+            device=device  # Use GPU if available
         )
 
         self.max_length = 2048
 
     def generate(self, prompt):
-        # Generate a response using the pipeline with truncation enabled
+        # Set seed for reproducibility before generation
+        set_seed(42)
+
+        # Generate a response using the pipeline
         response = self.pipeline(
             prompt,
-            do_sample=False,
+            do_sample=True,  # Enable randomness in generation
             max_length=min(len(self.tokenizer.encode(prompt)) + 50, self.max_length),
             pad_token_id=self.tokenizer.pad_token_id,
-            eos_token_id=self.tokenizer.eos_token_id,
-            truncation=True  # Explicit truncation to avoid warning
+            eos_token_id=self.tokenizer.eos_token_id
         )
         # Extract the generated text from the response
         generated_text = response[0]["generated_text"]
