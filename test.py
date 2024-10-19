@@ -41,11 +41,11 @@ for question_id, question_data in all_questions:
     else:
         options_text = ''
 
-    # Create the prompt for zero-shot prompting
+    # Create a more concise prompt with explicit guidance
     prompt = (
         f"Question: {question} "
         f"Options: {options_text} "
-        "Please select the most appropriate option (A, B, or C). The answer is:"
+        "Select the most appropriate option (A, B, or C) and provide only the letter of your choice."
     )
 
     number_all_questions += 1
@@ -58,20 +58,17 @@ for question_id, question_data in all_questions:
         # Set seed for reproducibility
         set_seed(42)
 
-        # Generate an answer using top-k sampling
+        # Generate an answer using constrained beam search
         with torch.no_grad():
             generated_text = model.generate(
                 **inputs,
-                max_new_tokens=50,  # Generate up to 50 new tokens beyond the input length
-                num_beams=5,        # Increase num_beams for better beam search
-                top_k=50,           # Use top-k sampling for variety
-                top_p=0.95,         # Use nucleus sampling
-                do_sample=True,
+                max_new_tokens=5,  # Generate a very short response
+                num_beams=5,       # Use beam search for deterministic output
                 early_stopping=True
             )
 
         # Decode the generated text
-        decoded_text = tokenizer.decode(generated_text[0], skip_special_tokens=True)
+        decoded_text = tokenizer.decode(generated_text[0], skip_special_tokens=True).strip()
 
         # Extract the chosen answer using a regular expression
         match = re.search(r'\b(A|B|C)\b', decoded_text)
