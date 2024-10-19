@@ -53,7 +53,8 @@ for question_id, question_data in all_questions:
         options_text = ''
 
     # Create the prompt for the question and options
-    prompt = f"Question: {question}\nOptions:\n{options_text}\nAnswer:"
+    # prompt = f"Question: {question}\nOptions:\n{options_text}\nAnswer:"
+    prompt = "Is there a connection between sublingual varices and hypertension? Options: A. yes B. no C. maybe"
 
     number_all_questions += 1
     # Use MedRAG to generate the answer with a timeout
