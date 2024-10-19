@@ -38,12 +38,12 @@ for question_id, question_data in all_questions:
 
     # Prepare options text
     if options:
-        options_text = '\n'.join([f"{key}. {options[key]}" for key in sorted(options.keys())])
+        options_text = ' '.join([f"{key}. {options[key]}" for key in sorted(options.keys())])
     else:
         options_text = ''
 
     # Create the prompt
-    prompt = f"{question} Choose one of the following: {options_text}"
+    prompt = f"{question} Choose one of the following: {options_text} Answer:"
 
     number_all_questions += 1
     signal.alarm(30)  # Set alarm for 30 seconds
@@ -55,12 +55,13 @@ for question_id, question_data in all_questions:
         # Set seed for reproducibility
         set_seed(42)
 
-        # Generate an answer using beam search
+        # Generate an answer using top-p sampling
         with torch.no_grad():
             generated_text = model.generate(
                 **inputs,
                 max_length=100,  # Allow for a longer response
-                num_beams=5,
+                top_p=0.9,       # Nucleus sampling for diverse generation
+                do_sample=True,
                 early_stopping=True
             )
 
