@@ -1,6 +1,5 @@
 import json
 import re
-import random
 import signal
 import torch
 from transformers import BioGptTokenizer, BioGptForCausalLM, set_seed
@@ -42,8 +41,8 @@ for question_id, question_data in all_questions:
     else:
         options_text = ''
 
-    # Create the prompt
-    prompt = f"{question} Choose one of the following: {options_text} Answer:"
+    # Create the prompt with more context
+    prompt = f"According to the latest biomedical research findings, {question} Choose one of the following: {options_text} Answer:"
 
     number_all_questions += 1
     signal.alarm(30)  # Set alarm for 30 seconds
@@ -55,12 +54,14 @@ for question_id, question_data in all_questions:
         # Set seed for reproducibility
         set_seed(42)
 
-        # Generate an answer using top-p sampling
+        # Generate an answer using top-k sampling
         with torch.no_grad():
             generated_text = model.generate(
                 **inputs,
                 max_length=100,  # Allow for a longer response
-                top_p=0.9,       # Nucleus sampling for diverse generation
+                num_beams=5,     # Increase num_beams for better beam search
+                top_k=50,        # Use top-k sampling for variety
+                top_p=0.95,      # Use nucleus sampling
                 do_sample=True,
                 early_stopping=True
             )
