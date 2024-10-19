@@ -13,7 +13,7 @@ with open('pubmedqa.json', 'r') as f:
 all_questions = list(benchmark_data.items())
 
 # Limit to the first 200 questions
-all_questions = all_questions[:5]
+all_questions = all_questions[470:475]
 # all_questions = all_questions[600:1000]
 # all_questions = all_questions[400:600]
 # all_questions = all_questions[600:800]
