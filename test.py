@@ -28,6 +28,14 @@ def timeout_handler(signum, frame):
 # Set the timeout limit to 60 seconds
 signal.signal(signal.SIGALRM, timeout_handler)
 
+# Few-shot examples to guide the model
+few_shot_examples = (
+    "Question: Is aspirin effective in preventing cardiovascular events? "
+    "Options: A. yes B. no C. maybe Answer: A.\n"
+    "Question: Does smoking increase the risk of lung cancer? "
+    "Options: A. yes B. no C. maybe Answer: A.\n"
+)
+
 # Iterate over each question and get the generated answer
 for question_id, question_data in all_questions:
     # Extract the question, options, and correct answer
@@ -41,8 +49,13 @@ for question_id, question_data in all_questions:
     else:
         options_text = ''
 
-    # Create the prompt with more context
-    prompt = f"According to the latest biomedical research findings, {question} Choose one of the following: {options_text} Answer:"
+    # Create the prompt with few-shot examples and more guidance
+    prompt = (
+        few_shot_examples +
+        f"Question: {question} "
+        f"Options: {options_text} "
+        "Please select one of the following options (A, B, or C). The answer is:"
+    )
 
     number_all_questions += 1
     signal.alarm(30)  # Set alarm for 30 seconds
