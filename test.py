@@ -71,10 +71,10 @@ for question_id, question_data in all_questions:
         with torch.no_grad():
             generated_text = model.generate(
                 **inputs,
-                max_length=100,  # Allow for a longer response
-                num_beams=5,     # Increase num_beams for better beam search
-                top_k=50,        # Use top-k sampling for variety
-                top_p=0.95,      # Use nucleus sampling
+                max_new_tokens=50,  # Generate up to 50 new tokens beyond the input length
+                num_beams=5,        # Increase num_beams for better beam search
+                top_k=50,           # Use top-k sampling for variety
+                top_p=0.95,         # Use nucleus sampling
                 do_sample=True,
                 early_stopping=True
             )
